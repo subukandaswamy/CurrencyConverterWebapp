@@ -1,18 +1,26 @@
 package org.cpts422;
 
-import org.cpts422.bootstrap.DataLoader;
 import org.cpts422.currencies.Curr;
 import org.cpts422.services.CurrencyConversionService;
-import org.cpts422.services.CurrencyConversionServiceImpl;
 import org.cpts422.transaction.Transaction;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
+@Component
+@Order(2) //When there are multiple command line runners, the order says which one to run first
+public class Main implements CommandLineRunner {
+
+    private final CurrencyConversionService service;
+
+    public Main(CurrencyConversionService service) {
+        this.service = service;
+    }
 
 
-public class Main {
+    @Override
+    public void run(String... args) throws Exception {
 
-    private static final CurrencyConversionService service = new CurrencyConversionServiceImpl();
-
-    public static void main(String[] args) {
-        DataLoader.loadData();
         for (Curr c : service.getAllSupportedCurrency()) {
             System.out.println(c);
         }

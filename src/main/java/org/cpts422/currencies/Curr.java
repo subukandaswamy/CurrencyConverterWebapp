@@ -1,22 +1,34 @@
 package org.cpts422.currencies;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import org.cpts422.brokers.Broker;
 
+@Entity
+@Table(name = "Currencies")
 public class Curr {
 
-    private final String code;
+    @Id
+    private String code;
 
-    private final String name;
+    private String name;
 
-    private final double rate;
+    private double rate;
 
-    private final Broker broker;
+    @ManyToOne
+    private Broker broker;
 
-    Curr(String code, String name, double rate, Broker broker) {
+    public Curr(String code, String name, double rate, Broker broker) {
         this.code = code;
         this.name = name;
         this.rate = rate;
         this.broker = broker;
+    }
+
+    public Curr() {
+
     }
 
     public String getCode() {

@@ -1,24 +1,39 @@
 package org.cpts422.bootstrap;
 
 import org.cpts422.brokers.Broker;
-import org.cpts422.brokers.BrokerDao;
-import org.cpts422.brokers.BrokerDaoImpl;
-import org.cpts422.currencies.CurrencyDao;
-import org.cpts422.currencies.CurrencyDaoImpl;
+import org.cpts422.brokers.BrokerRepository;
+import org.cpts422.currencies.Curr;
+import org.cpts422.currencies.CurrencyRepository;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 
-public class DataLoader {
+@Component
+@Order(1) //When there are multiple command line runners, the order says which one to run first
+public class DataLoader implements CommandLineRunner {
 
-    private static final BrokerDao brokerDao = new BrokerDaoImpl();
+    private final BrokerRepository brokerRepository;
 
-    private static final CurrencyDao currDao = new CurrencyDaoImpl();
+    private final CurrencyRepository currencyRepository;
 
-    public static void loadData() {
-        Broker broker = brokerDao.createBroker("Forex", 0.1);
-        currDao.createCurrency("INR", "Indian Rupee", 80, broker);
-        currDao.createCurrency("CNY", "Chinese Yuan", 8, broker);
+    public DataLoader(BrokerRepository brokerRepository, CurrencyRepository currencyRepository) {
+        this.brokerRepository = brokerRepository;
+        this.currencyRepository = currencyRepository;
+    }
 
+    private void bootstrapData() {
+        Broker broker = new Broker("Forex", 0.1);
+        brokerRepository.save(broker);
+        Curr inr = new Curr("INR", "Indian Rupee", 80, broker);
+        inr = currencyRepository.save(inr);
+        Curr cny = new Curr("CNY", "Chinese Yuan", 8, broker);
+        cny = currencyRepository.save(cny);
     }
 
 
+    @Override
+    public void run(String... args) throws Exception {
+        bootstrapData();
+    }
 }

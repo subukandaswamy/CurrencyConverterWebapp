@@ -1,13 +1,23 @@
 package org.cpts422.transaction;
 
+import jakarta.persistence.*;
 import org.cpts422.currencies.Curr;
 
 import java.sql.Timestamp;
 
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "transactionType")
 public abstract class Transaction {
-    protected final Curr curr;
 
-    protected final double initAmount;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    protected long id;
+
+    @ManyToOne
+    protected Curr curr;
+
+    protected double initAmount;
 
     protected double comm;
 
@@ -15,11 +25,14 @@ public abstract class Transaction {
 
     protected Timestamp created;
 
-
     protected Transaction(Curr curr, double initAmount) {
         this.curr = curr;
         this.initAmount = initAmount;
         this.created = new Timestamp(System.currentTimeMillis());
+    }
+
+    protected Transaction() {
+
     }
 
     public Curr getCurr() {
